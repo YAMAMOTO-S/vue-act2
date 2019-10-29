@@ -50,9 +50,9 @@
           </div>
           <div class="column is-9">
             <div class="box content">
-              <!-- <activity-item v-for="activity in activities"
+              <ActivityItem v-for="activity in activities"
                              :activity="activity"
-                             :key="activity.id"></activity-item> -->
+                             :key="activity.id"></ActivityItem>
             </div>
           </div>
         </div>
@@ -64,9 +64,13 @@
 
 
 <script>
+import ActivityItem from './components/ActivityItem'
 
 export default {
   name: 'app',
+  components: {
+    ActivityItem
+  },
   data(){
     return {
           isFormDisplayed: false,
