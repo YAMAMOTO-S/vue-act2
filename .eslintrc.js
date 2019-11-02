@@ -7,6 +7,8 @@ module.exports = {
    rules: {
       // override/add rules settings here, such as:
       // 'vue/no-unused-vars': 'error'
-      'vue/singleline-html-element-content-newline': 0
+      'vue/singleline-html-element-content-newline': 0,
+      'vue/mustache-interpolation-spacing': 0,
+      'vue/html-indent': 0,
    }
 }

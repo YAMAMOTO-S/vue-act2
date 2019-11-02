@@ -3,7 +3,7 @@
     <nav class="navbar is-white topNav">
       <div class="container">
         <div class="navbar-brand">
-          <h1>Activity Planner</h1>
+          <h1>{{ fullAppName }}</h1>
         </div>
       </div>
     </nav>
@@ -29,61 +29,12 @@
     </nav>
     <section class="container">
       <div class="columns">
+
         <div class="column is-3">
-          <a
-            v-if="!isFormDisplayed"
-            class="button is-primary is-block is-alt is-large"
-            href="#"
-            @click="toggleFormDisplay"
-          >New Activity</a>
-          <div
-            v-if="isFormDisplayed"
-            class="create-form"
-          >
-            <h2>Create Activity</h2>
-            <form>
-              <div class="field">
-                <label class="label">Title</label>
-                <div class="control">
-                  <input
-                    v-model="newActivity.title"
-                    class="input"
-                    type="text"
-                    placeholder="Read a Book"
-                  >
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Notes</label>
-                <div class="control">
-                  <textarea
-                    v-model="newActivity.notes"
-                    class="textarea"
-                    placeholder="Write some notes here"
-                  />
-                </div>
-              </div>
-              <div class="field is-grouped">
-                <div class="control">
-                  <button
-                    class="button is-link"
-                    @click="createActivity"
-                  >
-                    Create Activity
-                  </button>
-                </div>
-                <div class="control">
-                  <button
-                    class="button is-text"
-                    @click="toggleFormDisplay"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
+          <!-- ACT作成フォーム -->
+          <ActivityCreate :categories='categories'/>
         </div>
+
         <div class="column is-9">
           <div class="box content">
             <ActivityItem
@@ -91,6 +42,8 @@
               :key="activity.id"
               :activity="activity"
             />
+            <div class="act-length">now {{ actLength }} act</div>
+            <div class="act-motivation">{{actMotivation}}</div>
           </div>
         </div>
       </div>
@@ -103,70 +56,61 @@
 
 <script>
 import ActivityItem from '@/components/ActivityItem'
-import  { fetchActivities }  from '@/api/index'
+import ActivityCreate from '@/components/ActivityCreate'
+import  { fetchActivities, fetchUser, fetchCategories }  from '@/api/index'
+
 
 export default {
   name: 'App',
   components: {
-    ActivityItem
+    ActivityItem,
+    ActivityCreate
+    
   },
   data(){
     return {
-          isFormDisplayed: false,
-          message: 'Hello Vue!',
-          titleMessage: 'Title Message Vue!!!!!',
-          isTextDisplayed: true,
-          newActivity: {
-            title: '',
-            notes: ''
-          },
+          
+          creator: 'Shunya Yamamoto',
+          appName: 'Act Planner',
+          watchedAppName: 'Act Planner by Shunya',
+          
           items: {1: {name: 'Filip'}, 2: {name: 'John'}},
-          user: {
-            name: 'Filip Jerga',
-            id: '-Aj34jknvncx98812',
-          },
+          user: {},
           activities: {},
-          categories: {
-            '1546969049': {text: 'books'},
-            '1546969225': {text: 'movies'}
-          }
+          categories: {}
         }
   },
-  beforeCreate () {
-    console.log('beforeCreate called!')
-  },
-  created () {
-    this.activities = fetchActivities()
-  },
-  beforeMount () {
-    console.log('beforeMount called!')
-  },
-  mounted () {
-    console.log('mounted called!')
-  },
-  beforeUpdate () {
-    console.log('beforeUpdate called!')
-  },
-  updated () {
-    console.log('updated called!')
-  },
-  beforeDestroy () {
-    console.log('beforeDestroy called!')
-  },
-  destroyed () {
-    console.log('destroyed called!')
+
+   computed: {
+    
+    fullAppName(){
+      return this.appName + ' by ' + this.creator
+    },
+    actLength(){
+      const activitiesKeyArray = Object.keys(this.activities)
+      const activityLength = activitiesKeyArray.length
+      return activityLength //actの数を表示する。
+    },
+    actMotivation(){
+      if(this.actLength && this.actLength < 5){
+        return 'Good job!'
+      } else if (this.actLength >= 5) {
+        return 'Wow !! so many goals !!'
+      } else {
+        return 'no act '
+      }
+    }
   },
 
-  methods: {
-    toggleTextDisplay () {
-            this.isTextDisplayed = !this.isTextDisplayed
-          },
-          toggleFormDisplay () {
-            this.isFormDisplayed = !this.isFormDisplayed
-          },
-          createActivity () {
-            console.log(this.newActivity)
-          }
+  created () {
+    this.activities = fetchActivities()
+    this.categories = fetchCategories()
+    this.user = fetchUser()
+  },
+
+
+  methods: {  
+          
     } 
 }
 </script>
@@ -186,6 +130,14 @@ html,body {
 footer {
   background-color: #F2F6FA !important;
 }
+
+.act-length{
+  display: inline-block;
+}
+.act-motivation{
+  float: right;
+}
+
 
 .example-wrapper {
   margin-left: 30px;
